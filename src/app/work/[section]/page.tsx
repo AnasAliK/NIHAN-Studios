@@ -123,6 +123,7 @@ export default async function SectionPage({ params }: Props) {
                 </h3>
                 <p className="project-row__type">{p.type}</p>
                 {p.hackathon && <p>Developed during the {p.hackathon}.</p>}
+                {p.status && <p>{p.status}{p.releaseDate ? ` · Full release: ${p.releaseDate}` : ''}.</p>}
                 <p>{p.summary}</p>
                 <div className="project-row__thumbs" aria-hidden="true">
                   {p.images.slice(0, 4).map((src) => (

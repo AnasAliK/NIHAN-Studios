@@ -73,6 +73,18 @@ export default async function ProjectPage({ params }: Props) {
         <section className="project-intro" data-reveal>
           <p className="project-intro__summary">{project.summary}</p>
           <dl className="project-intro__meta">
+            {project.status && (
+              <div>
+                <dt>Status</dt>
+                <dd>{project.status}</dd>
+              </div>
+            )}
+            {project.releaseDate && (
+              <div>
+                <dt>Full release</dt>
+                <dd>{project.releaseDate}</dd>
+              </div>
+            )}
             {project.hackathon && (
               <div>
                 <dt>Developed during</dt>

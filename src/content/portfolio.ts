@@ -16,6 +16,8 @@ export interface Project {
   slug?: string;
   repository?: string;
   hackathon?: string;
+  status?: string;
+  releaseDate?: string;
   type: string;
   summary: string;
   images: string[];
@@ -54,6 +56,8 @@ export const site = {
 const makinz: Project = {
   title: 'MakinZ',
   slug: 'mackinz',
+  status: 'Available in early access',
+  releaseDate: 'December 2026',
   type: 'Mobile app · Habits & wellness',
   summary:
     'A quest-driven habits and wellness app. Complete healthy routines, earn XP and coins, track nutrition and level up a polar-bear explorer through a playful mobile interface.',
@@ -117,10 +121,7 @@ export const portfolio: PortfolioSection[] = [
         type: 'Third-person team shooter · Motion-matched movement',
         summary:
           'A fast-paced team arena shooter rebuilt on fluid, motion-matched locomotion — capture points and tight gunplay, with traversal and vaulting that feel alive.',
-        images: [
-          ...[1, 2, 3].map((n) => `/assets/games/lyra-${n}.jpg`),
-          ...[1, 2, 3, 4].map((n) => `/assets/games/gasp-${n}.jpg`),
-        ],
+        images: [1, 2, 3, 4, 5, 6, 7].map((n) => `/assets/games/gasp-lyra-video-${n}.jpg`),
         video: '/assets/games/gasp-lyra.mp4',
       },
       {
@@ -139,9 +140,10 @@ export const portfolio: PortfolioSection[] = [
       },
       {
         title: 'Anxious Antic',
-        type: 'Timed comedy game',
+        type: 'Game concept · Planned for Unity',
+        status: 'Concept — planned for development in Unity',
         summary:
-          'A frantic twenty-second rush through awkward, hilarious social moments. Short rounds turn everyday social pressure into a quick burst of playful chaos.',
+          'A timed comedy game concept planned for development in Unity. The idea is a frantic twenty-second rush through awkward, hilarious social moments, with short rounds turning everyday social pressure into a quick burst of playful chaos.',
         images: ['/assets/portfolio/Anx_Cover.jpg'],
         link: 'https://assassinx0.itch.io/anxious-antic',
       },

@@ -60,7 +60,8 @@ export function CameraRig({ layout }: { layout: Layout }) {
     const nearDoor = 1 - smoothstep(0, 5, Math.abs(pos.current.z));
     st.px = THREE.MathUtils.damp(st.px, state.pointer.x, 3, dt);
     st.py = THREE.MathUtils.damp(st.py, state.pointer.y, 3, dt);
-    const k = 1 - nearDoor * 0.85;
+    // Keep the opening emblem aligned with its centered wordmark.
+    const k = (1 - nearDoor * 0.85) * (i === 0 ? smoothstep(0, 0.35, u) : 1);
     pos.current.x += st.px * 0.45 * k;
     pos.current.y += st.py * 0.25 * k;
     look.current.x += st.px * 1.1 * k;
