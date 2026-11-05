@@ -121,8 +121,8 @@ export const portfolio: PortfolioSection[] = [
         type: 'Third-person team shooter · Motion-matched movement',
         summary:
           'A fast-paced team arena shooter rebuilt on fluid, motion-matched locomotion — capture points and tight gunplay, with traversal and vaulting that feel alive.',
-        images: [1, 2, 3, 4, 5, 6, 7].map((n) => `/assets/games/gasp-lyra-video-${n}.jpg`),
-        video: '/assets/games/gasp-lyra.mp4',
+        images: [1, 2, 3, 4, 5, 6, 7].map((n) => `/assets/games/gasp-lyra-recording-${n}.jpg`),
+        video: '/assets/games/gasp-lyra-recording.mp4',
       },
       {
         ...makinz,

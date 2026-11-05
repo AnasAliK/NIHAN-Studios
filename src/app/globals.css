@@ -271,7 +271,16 @@ button {
   gap: 4px;
   padding: 5px;
 }
-.nav__links a {
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav__toggle {
+  display: none;
+}
+.nav__links a,
+.nav__cta {
   padding: 8px 16px;
   border-radius: 999px;
   font-size: 12px;
@@ -287,12 +296,11 @@ button {
   color: var(--gold-bright);
   background: rgba(212, 180, 122, 0.12);
 }
-.nav__links .nav__cta {
-  margin-left: 6px;
+.nav__cta {
   color: #1a120a;
   background: linear-gradient(180deg, #ecd5a2, #c39e62);
 }
-.nav__links .nav__cta:hover {
+.nav__cta:hover {
   color: #120c06;
   background: linear-gradient(180deg, #f6e2b6, #d1ad70);
 }
@@ -1756,14 +1764,62 @@ button {
 @media (max-width: 767px) {
   .nav {
     padding: 12px 16px;
+    gap: 8px;
   }
-  .nav__links a:not(.nav__cta) {
-    display: none;
+  .nav__brand {
+    flex-shrink: 0;
+    padding: 4px;
   }
-  .nav--solid .nav__links a:not(.nav__cta) {
-    display: inline-block;
-    padding: 8px 9px;
+  .nav__logo {
+    width: 56px;
+    height: 56px;
+  }
+  .nav__actions {
+    gap: 8px;
+  }
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #100d09;
+    color: var(--gold-bright);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
     font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .nav .nav__links {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 16px;
+    right: 16px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: #100d09;
+    box-shadow: 0 16px 40px #0008;
+  }
+  .nav .nav__links--open {
+    display: grid;
+  }
+  .nav .nav__links a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 12px;
     letter-spacing: 0.08em;
   }
   .nav--solid .nav__brand span {
