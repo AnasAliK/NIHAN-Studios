@@ -268,6 +268,19 @@ export const portfolio: PortfolioSection[] = [
         ),
         repository: 'https://github.com/AnasAliK/CognitiveCleanse',
       },
+      {
+        title: 'Cerberus',
+        type: 'Cybersecurity · Interactive product website',
+        summary:
+          'A cinematic product website for a layered data-loss prevention system. A dark interface, warm gradients and bold typography introduce the product, while detection-layer cards and a scroll-driven request trace explain its workflow. Animated performance figures, evaluation charts and industry use cases turn a technical security platform into an approachable web experience.',
+        images: [
+          '/assets/web/cerberus-home.png',
+          '/assets/web/cerberus-pipeline.png',
+          '/assets/web/cerberus-performance.png',
+          '/assets/web/cerberus-use-cases.png',
+        ],
+        link: 'https://cer-ber-us.live/',
+      },
     ],
   },
 ];
