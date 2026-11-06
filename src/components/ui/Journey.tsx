@@ -45,7 +45,8 @@ export function Journey() {
         const p = panels[i];
         if (p) {
           p.style.opacity = o.toFixed(3);
-          p.style.transform = `translate3d(0, ${((1 - o) * (local < 0.5 ? 40 : -40)).toFixed(1)}px, 0)`;
+          const offset = sec.classList.contains('stop--portfolio') ? 0 : (1 - o) * (local < 0.5 ? 40 : -40);
+          p.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
           p.style.visibility = o < 0.02 ? 'hidden' : 'visible';
         }
         const dist = Math.abs(local - 0.5);
@@ -118,9 +119,9 @@ export function Journey() {
       </section>
 
       {portfolio.map((s) => (
-        <section className="stop" id={s.id} key={s.id} data-align={ALIGN[s.id]}>
+        <section className="stop stop--portfolio" id={s.id} key={s.id} data-align={ALIGN[s.id]}>
           <div className="stop__sticky">
-            <article className="panel">
+            <article className="panel" data-lenis-prevent>
               <p className="panel__index">{s.index}</p>
               <p className="kicker">{s.kicker}</p>
               <h2>{s.name}</h2>

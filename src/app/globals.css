@@ -417,6 +417,20 @@ button {
   letter-spacing: 0.03em;
   color: var(--gold-bright);
 }
+.stop--portfolio {
+  --panel-top: 128px;
+  --panel-bottom: 24px;
+}
+.stop--portfolio .stop__sticky {
+  padding-top: var(--panel-top);
+  padding-bottom: var(--panel-bottom);
+}
+.stop--portfolio .panel {
+  max-height: calc(100svh - var(--panel-top) - var(--panel-bottom));
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+}
 .panel p {
   margin: 0 0 18px;
   color: var(--text);
@@ -1762,6 +1776,10 @@ button {
 }
 
 @media (max-width: 767px) {
+  .stop--portfolio {
+    --panel-top: 106px;
+    --panel-bottom: max(20px, env(safe-area-inset-bottom));
+  }
   .nav {
     padding: 12px 16px;
     gap: 8px;
@@ -1837,6 +1855,10 @@ button {
   .panel {
     max-width: 100%;
     padding: 24px 22px 22px;
+  }
+  .stop--portfolio .stop__sticky {
+    padding-top: var(--panel-top);
+    padding-bottom: var(--panel-bottom);
   }
   .panel h2 {
     font-size: 28px;
