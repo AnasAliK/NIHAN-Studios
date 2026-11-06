@@ -104,7 +104,14 @@ export default async function SectionPage({ params }: Props) {
                   ) : (
                     <>
                       <Image src={p.images[0]} alt="" fill sizes="(max-width: 900px) 100vw, 55vw" />
-                      {p.images[1] && (
+                      {p.upcoming && (
+                        <span className="project-banner" aria-hidden="true">
+                          <span className="project-banner__badge">Upcoming · NIHĀN Original</span>
+                          <strong>{p.title}</strong>
+                          <span className="project-banner__caption">Concept art · In development</span>
+                        </span>
+                      )}
+                      {p.images[1] && !p.upcoming && (
                         <span className="project-row__peek">
                           <Image src={p.images[1]} alt="" fill sizes="20vw" />
                         </span>
@@ -122,6 +129,8 @@ export default async function SectionPage({ params }: Props) {
                   <Link href={projectHref(section.id, p)}>{p.title}</Link>
                 </h3>
                 <p className="project-row__type">{p.type}</p>
+                {p.engine && <p>Made with {p.engine}.</p>}
+                {p.foundation && <p>Built on our <Link href={p.foundation.href}>{p.foundation.title}</Link> foundation.</p>}
                 {p.hackathon && <p>Developed during the {p.hackathon}.</p>}
                 {p.status && <p>{p.status}{p.releaseDate ? ` · Full release: ${p.releaseDate}` : ''}.</p>}
                 <p>{p.summary}</p>

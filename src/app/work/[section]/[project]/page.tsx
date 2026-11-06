@@ -73,6 +73,12 @@ export default async function ProjectPage({ params }: Props) {
         <section className="project-intro" data-reveal>
           <p className="project-intro__summary">{project.summary}</p>
           <dl className="project-intro__meta">
+            {project.engine && (
+              <div><dt>Made with</dt><dd>{project.engine}</dd></div>
+            )}
+            {project.foundation && (
+              <div><dt>Built on</dt><dd><Link href={project.foundation.href}>{project.foundation.title}</Link></dd></div>
+            )}
             {project.status && (
               <div>
                 <dt>Status</dt>
@@ -147,7 +153,7 @@ export default async function ProjectPage({ params }: Props) {
         <section className="page-block" aria-labelledby="gallery-title">
           <div className="page-block__head" data-reveal>
             <h2 className="page-block__title" id="gallery-title">
-              Gallery
+              {project.upcoming ? 'Concept art' : 'Gallery'}
             </h2>
             <span className="page-block__count">Click any image to enlarge</span>
           </div>

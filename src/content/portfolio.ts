@@ -18,6 +18,9 @@ export interface Project {
   hackathon?: string;
   status?: string;
   releaseDate?: string;
+  upcoming?: boolean;
+  engine?: string;
+  foundation?: { title: string; href: string };
   type: string;
   summary: string;
   images: string[];
@@ -114,7 +117,22 @@ export const portfolio: PortfolioSection[] = [
     services: [],
     projects: [
       {
+        title: 'The Qareen Protocol',
+        type: 'Upcoming · Action shooter',
+        status: 'In development · Release date to be announced',
+        upcoming: true,
+        engine: 'Unreal Engine 5',
+        foundation: { title: 'GASP × Lyra', href: '/work/games/gasp-lyra' },
+        summary: 'Some things were buried to be forgotten. Something beneath the ruins remembers.',
+        images: [
+          '/assets/games/qareen-cover.jpg',
+          '/assets/games/qareen-world.jpg',
+          '/assets/games/qareen-traversal.jpg',
+        ],
+      },
+      {
         title: 'Zombie Wave Survival',
+        engine: 'Unreal Engine',
         type: 'First-person shooter',
         summary:
           'Hold the line on a coastal bridge against escalating waves of the undead. Limited ammo, makeshift barricades, nowhere to run.',
@@ -125,6 +143,7 @@ export const portfolio: PortfolioSection[] = [
       },
       {
         title: 'GASP × Lyra',
+        engine: 'Unreal Engine',
         type: 'Third-person team shooter · Motion-matched movement',
         summary:
           'A fast-paced team arena shooter rebuilt on fluid, motion-matched locomotion — capture points and tight gunplay, with traversal and vaulting that feel alive.',
