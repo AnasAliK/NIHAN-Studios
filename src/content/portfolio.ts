@@ -92,7 +92,11 @@ const chatbot: Project = {
   type: 'Python · Gradio · Conversational web interface',
   summary:
     'A browser-based chat application built in Python with Gradio. Its web interface connects user messages to the OpenAI API and presents responses in a conversational workflow.',
-  images: ['/assets/portfolio/chatbot.png'],
+  images: [
+    '/assets/web/chatbot-desktop.png',
+    '/assets/web/chatbot-conversation.png',
+    '/assets/web/chatbot-mobile.png',
+  ],
   repository: 'https://github.com/AnasAliK/AI-Chatbot',
 };
 
