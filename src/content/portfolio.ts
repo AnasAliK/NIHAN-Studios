@@ -249,7 +249,12 @@ export const portfolio: PortfolioSection[] = [
         type: 'E-commerce · Gaming accessories',
         summary:
           'A web storefront for gaming accessories, bringing the store’s products into an online shopping interface. The project presents a gaming-focused retail experience with its implementation available in the linked repository.',
-        images: ['/assets/portfolio/alphastore.png'],
+        images: [
+          '/assets/web/alpha-store-01-home-desktop.jpg',
+          '/assets/web/alpha-store-02-full-store-desktop.jpg',
+          '/assets/web/alpha-store-03-catalog-desktop.jpg',
+          '/assets/web/alpha-store-04-product-desktop.jpg',
+        ],
         repository: 'https://github.com/AnasAliK/Gaming-Accessories-Store',
       },
       chatbot,
