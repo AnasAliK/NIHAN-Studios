@@ -114,7 +114,10 @@ export const portfolio: PortfolioSection[] = [
         type: 'First-person shooter',
         summary:
           'Hold the line on a coastal bridge against escalating waves of the undead. Limited ammo, makeshift barricades, nowhere to run.',
-        images: [1, 2, 3, 4, 5].map((n) => `/assets/games/zombie-${n}.jpg`),
+        images: [
+          ...[1, 2].map((n) => `/assets/games/zombie-${n}.jpg`),
+          ...[1, 2, 3, 4, 5, 6].map((n) => `/assets/games/zombie-new-${n}.png`),
+        ],
       },
       {
         title: 'GASP × Lyra',
