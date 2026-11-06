@@ -3,13 +3,14 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
 import { ridged, noise2, smoothstep } from '@/lib/noise';
-import { radialTexture, verticalTexture } from '@/lib/textures';
+import { radialTexture, verticalTexture, rockTexture } from '@/lib/textures';
 import { PEAKS } from '@/lib/layout';
 
 /** Colours of the world beyond the door (logo: sepia mountains in luminous mist). */
 export const HAZE = new THREE.Color('#c3ab82');
-const ROCK_DARK = new THREE.Color('#211b15');
-const ROCK_LIGHT = new THREE.Color('#b39a72');
+const ROCK_DARK = new THREE.Color('#282620');
+const ROCK_LIGHT = new THREE.Color('#c4ab80');
+const ROCK_LAYER = new THREE.Color('#786b56');
 const LIGHT_DIR = new THREE.Vector3(-0.45, 0.75, 0.35).normalize();
 
 const SKY_Z = -385;
@@ -22,7 +23,10 @@ function peak(x: number, z: number, p: (typeof PEAKS)[number]) {
   // Sharp, slightly concave profile with jagged ridges on the flanks; the very tip stays clean.
   const k = 1 - dist / r;
   const cone = k * k * (1.6 - 0.6 * k);
-  const rock = (ridged(x * 0.11 + p.x, z * 0.11 + p.z, 5) - 0.32) * p.h * 1.5;
+  // Broad ribs read clearly at both mesh resolutions; avoid noisy needle-like flanks.
+  const angle = Math.atan2(z - p.z, x - p.x);
+  const ribs = Math.cos(angle * 5 + p.x * 0.12 + dist * 0.045) * 0.12;
+  const rock = ((ridged(x * 0.075 + p.x, z * 0.075 + p.z, 4) - 0.32) * 0.95 + ribs) * p.h;
   const flank = smoothstep(0.02, 0.25, 1 - k) * (1 - smoothstep(0.6, 1, 1 - k));
   return p.h * cone + rock * flank * cone;
 }
@@ -36,7 +40,7 @@ function height(x: number, z: number) {
   const far = smoothstep(200, 330, d) * 0.7;
   const mask = Math.max(near, far);
   // Ranges grow with distance but stay below the sun on the horizon.
-  const ranges = ridged(x * 0.022 + 3.1, z * 0.022 - 1.7) * (8 + Math.min(d, 150) * 0.42);
+  const ranges = ridged(x * 0.022 + 3.1, z * 0.022 - 1.7, 5) * (8 + Math.min(d, 150) * 0.42);
   const ground = (noise2(x * 0.15, z * 0.15) - 0.5) * 0.35 + (noise2(x * 0.03, z * 0.03) - 0.5) * 2.4 * smoothstep(5, 30, d);
   let h = -0.15 + ground * (1 - mask) + mask * ranges;
   for (const p of PEAKS) h = Math.max(h, peak(x, z, p));
@@ -44,10 +48,15 @@ function height(x: number, z: number) {
 }
 
 const terrainVert = /* glsl */ `
+  varying vec3 vRockPosition;
+  varying vec3 vRockWeights;
   varying vec3 vColor;
   varying float vDist;
   varying float vH;
   void main() {
+    vRockPosition = position * 0.18;
+    vec3 weights = pow(abs(normal), vec3(4.0));
+    vRockWeights = weights / max(dot(weights, vec3(1.0)), 0.0001);
     vColor = color;
     vH = position.y;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
@@ -57,6 +66,9 @@ const terrainVert = /* glsl */ `
 `;
 
 const terrainFrag = /* glsl */ `
+  uniform sampler2D uRock;
+  varying vec3 vRockPosition;
+  varying vec3 vRockWeights;
   uniform vec3 uHaze;
   uniform float uDensity;
   varying vec3 vColor;
@@ -65,7 +77,15 @@ const terrainFrag = /* glsl */ `
   void main() {
     float f = 1.0 - exp(-vDist * uDensity);
     f += (1.0 - smoothstep(0.0, 22.0, vH)) * 0.28 * smoothstep(8.0, 70.0, vDist);
-    gl_FragColor = vec4(mix(vColor, uHaze, clamp(f, 0.0, 1.0)), 1.0);
+    // Three planar projections keep the fine detail from stretching on steep cliffs.
+    float rock = dot(vec3(
+      texture2D(uRock, vRockPosition.yz).r,
+      texture2D(uRock, vRockPosition.xz).r,
+      texture2D(uRock, vRockPosition.xy).r
+    ), vRockWeights);
+    float detail = smoothstep(0.0, 4.0, vH) * (1.0 - smoothstep(90.0, 240.0, vDist));
+    vec3 stone = vColor * (1.0 + (rock - 0.5) * 1.25 * detail);
+    gl_FragColor = vec4(mix(stone, uHaze, clamp(f, 0.0, 1.0)), 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
@@ -86,12 +106,34 @@ export function Beyond({ quality }: { quality: 'high' | 'low' }) {
     const colors = new Float32Array(pos.count * 3);
     const n = new THREE.Vector3();
     const c = new THREE.Color();
+    const stride = segX + 1;
     for (let i = 0; i < pos.count; i++) {
       n.fromBufferAttribute(nrm, i);
       const y = pos.getY(i);
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
       const lit = Math.pow(Math.max(0, n.dot(LIGHT_DIR)), 1.4);
       c.copy(ROCK_DARK).lerp(ROCK_LIGHT, lit * 0.85 + smoothstep(10, 70, y) * 0.25);
-      colors.set([c.r, c.g, c.b], i * 3);
+      // Bake strata and local crevice shading into existing vertex colors.
+      // These broad color variations complement the finer surface texture.
+      const mineral = noise2(x * 0.13 + 17, z * 0.13 - 9);
+      const grain = noise2(x * 0.32 + y * 0.09, z * 0.32 - y * 0.06);
+      const rockMask = smoothstep(0.5, 5, y);
+      const slope = 1 - smoothstep(0.65, 0.95, n.y);
+      // Warped sediment bands and mineral patches, sampled at mesh-scale frequencies.
+      const strata = 0.5 + 0.5 * Math.sin(y * 0.85 + x * 0.07 + z * 0.045 + mineral * 2.8);
+      const seam = smoothstep(0.68, 0.94, strata);
+      c.lerp(ROCK_LAYER, (strata * 0.22 + mineral * 0.12) * slope * rockMask);
+      c.multiplyScalar(1 + ((grain - 0.5) * 0.24 + (mineral - 0.5) * 0.18 - seam * slope * 0.14) * rockMask);
+      const col = i % stride;
+      if (col > 0 && col < segX && i >= stride && i < pos.count - stride) {
+        const surrounding = (pos.getY(i - 1) + pos.getY(i + 1) + pos.getY(i - stride) + pos.getY(i + stride)) * 0.25;
+        const relief = (y - surrounding) / (700 / segX);
+        c.multiplyScalar(1 - smoothstep(0, 0.8, -relief) * 0.2 + smoothstep(0, 0.65, relief) * 0.08);
+      }
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
@@ -99,7 +141,7 @@ export function Beyond({ quality }: { quality: 'high' | 'low' }) {
       vertexShader: terrainVert,
       fragmentShader: terrainFrag,
       vertexColors: true,
-      uniforms: { uHaze: { value: HAZE.clone() }, uDensity: { value: 0.006 } },
+      uniforms: { uHaze: { value: HAZE.clone() }, uDensity: { value: 0.005 }, uRock: { value: rockTexture() } },
     });
     return { geo, mat };
   }, [quality]);

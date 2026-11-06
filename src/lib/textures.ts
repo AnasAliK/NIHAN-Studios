@@ -1,4 +1,43 @@
 import * as THREE from 'three';
+import { noise2, smoothstep } from './noise';
+
+/** Small seamless rock map; grain and crevice relief are baked once on the CPU. */
+export function rockTexture() {
+  const size = 256;
+  const heights = new Float32Array(size * size);
+  const periodic = (u: number, v: number, scale: number) => {
+    const x = u * scale;
+    const y = v * scale;
+    const a = THREE.MathUtils.lerp(noise2(x, y), noise2(x - scale, y), u);
+    const b = THREE.MathUtils.lerp(noise2(x, y - scale), noise2(x - scale, y - scale), u);
+    return THREE.MathUtils.lerp(a, b, v);
+  };
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const u = x / size;
+      const v = y / size;
+      const coarse = periodic(u, v, 12);
+      const fissure = 1 - smoothstep(0.015, 0.075, Math.abs(coarse - 0.5));
+      heights[y * size + x] = coarse * 0.5 + periodic(u, v, 40) * 0.3 + periodic(u, v, 96) * 0.2 - fissure * 0.16;
+    }
+  }
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = y * size + x;
+      const relief = heights[y * size + (x + 1) % size] - heights[((y + 1) % size) * size + x];
+      const value = Math.round(THREE.MathUtils.clamp(0.5 + (heights[i] - 0.45) * 0.8 + relief * 1.8, 0.12, 0.9) * 255);
+      data.set([value, value, value, 255], i * 4);
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.needsUpdate = true;
+  return texture;
+}
 
 type Stop = [number, string];
 
