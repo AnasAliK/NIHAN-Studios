@@ -17,6 +17,47 @@ const ALIGN = Object.fromEntries(PEAKS.map((p) => [p.id, p.x < 0 ? 'right' : 'le
 export function Journey() {
   const root = useRef<HTMLElement>(null);
 
+  // Hand a single touch gesture from a tall card to the journey at either edge.
+  // Native nested scrolling can latch onto a card for the entire swipe on mobile.
+  useEffect(() => {
+    const cards = root.current?.querySelectorAll<HTMLElement>('.stop--portfolio .panel');
+    if (!cards) return;
+    const cleanups = Array.from(cards, (card) => {
+      let previousY: number | null = null;
+      const start = (event: TouchEvent) => {
+        previousY = event.touches.length === 1 ? event.touches[0].clientY : null;
+      };
+      const move = (event: TouchEvent) => {
+        if (previousY === null || event.touches.length !== 1) {
+          previousY = null;
+          return;
+        }
+        const y = event.touches[0].clientY;
+        const delta = previousY - y;
+        previousY = y;
+        if (!event.cancelable) return;
+        event.preventDefault();
+        const before = card.scrollTop;
+        const limit = Math.max(0, card.scrollHeight - card.clientHeight);
+        card.scrollTop = Math.max(0, Math.min(limit, before + delta));
+        const remaining = delta - (card.scrollTop - before);
+        if (Math.abs(remaining) > 0.5) window.scrollBy({ top: remaining, behavior: 'instant' });
+      };
+      const end = () => { previousY = null; };
+      card.addEventListener('touchstart', start, { passive: true });
+      card.addEventListener('touchmove', move, { passive: false });
+      card.addEventListener('touchend', end);
+      card.addEventListener('touchcancel', end);
+      return () => {
+        card.removeEventListener('touchstart', start);
+        card.removeEventListener('touchmove', move);
+        card.removeEventListener('touchend', end);
+        card.removeEventListener('touchcancel', end);
+      };
+    });
+    return () => cleanups.forEach((cleanup) => cleanup());
+  }, []);
+
   // Panel fades, rail state and stop measurement — driven straight from scroll, no React renders.
   useEffect(() => {
     const sections = STOPS.map((id) => document.getElementById(id)!);
