@@ -254,7 +254,9 @@ export const portfolio: PortfolioSection[] = [
         type: 'Next.js · Web application',
         summary:
           'A web project built with Next.js and React. Its implementation uses the Next.js App Router and a reusable component structure to organise the site’s interface and pages.',
-        images: ['/assets/portfolio/cognitive.png'],
+        images: ['home', 'dashboard', 'cleanse', 'join', 'support'].map(
+          (screen) => `/assets/web/cognitive-${screen}-desktop.png`,
+        ),
         repository: 'https://github.com/AnasAliK/CognitiveCleanse',
       },
     ],
