@@ -21,6 +21,7 @@ export interface Project {
   upcoming?: boolean;
   engine?: string;
   foundation?: { title: string; href: string };
+  identity?: { heading: string; intro: string; points: { title: string; text: string }[] };
   type: string;
   summary: string;
   images: string[];
@@ -123,6 +124,28 @@ export const portfolio: PortfolioSection[] = [
         upcoming: true,
         engine: 'Unreal Engine 5',
         foundation: { title: 'GASP × Lyra', href: '/work/games/gasp-lyra' },
+        identity: {
+          heading: 'Rooted in Pakistan. Created for the world.',
+          intro: 'The Qareen Protocol brings a Pakistani perspective to an original action game, with a world inspired by the places, history and folklore around us.',
+          points: [
+            {
+              title: 'Inspired by Pakistani heritage',
+              text: 'The planned environments draw from Pakistan’s ancient ruins, historic forts and intricate architecture, shaping a fictional world built for exploration.',
+            },
+            {
+              title: 'South Asian folklore, reimagined',
+              text: 'Ancient regional history and Jinn folklore shared across South Asia inspire the atmosphere and creative direction. This is an imaginative interpretation, not a retelling of history.',
+            },
+            {
+              title: 'An original world from a Pakistani studio',
+              text: 'NIHĀN Studios is developing its own characters, setting and identity on the GASP × Lyra gameplay foundation—a step toward creating original games from Pakistan.',
+            },
+            {
+              title: 'Local creativity, global players',
+              text: 'Our ambition is to bring Pakistani and South Asian stories to players worldwide, while building a sustainable studio where local developers can help create original games.',
+            },
+          ],
+        },
         summary: 'Some things were buried to be forgotten. Something beneath the ruins remembers.',
         images: [
           '/assets/games/qareen-cover.jpg',

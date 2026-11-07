@@ -134,6 +134,23 @@ export default async function ProjectPage({ params }: Props) {
           </dl>
         </section>
 
+        {project.identity && (
+          <section className="page-block project-identity" aria-labelledby="project-identity-title">
+            <p className="eyebrow">Our roots</p>
+            <h2 className="page-block__title" id="project-identity-title">{project.identity.heading}</h2>
+            <p className="project-identity__intro">{project.identity.intro}</p>
+            <ul className="project-identity__grid">
+              {project.identity.points.map((point, i) => (
+                <li key={point.title}>
+                  <span className="eyebrow" aria-hidden="true">0{i + 1}</span>
+                  <h3>{point.title}</h3>
+                  <p>{point.text}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {project.video && (
           <section className="page-block" aria-labelledby="project-video-title">
             <div className="page-block__head">
